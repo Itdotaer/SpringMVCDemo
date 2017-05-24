@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.3.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.example" />
+    <context:property-placeholder location="app.propertites" />
+
+    <bean id="knight" class="com.example.beans.BraveKnight">
+        <constructor-arg ref="quest" />
+    </bean>
+
+    <bean id="quest" class="com.example.beans.SlayDragonQuest">
+        <constructor-arg value="#{T(System).out}" />
+    </bean>
+
+    <bean id="minstrel" class="com.example.beans.Minstrel">
+        <constructor-arg value="#{T(System).out}" />
+    </bean>
+
+    <bean id="helloWorld" class="com.example.beans.HelloWorldBean">
+        <constructor-arg value="${msg1}" />
+        <constructor-arg value="Hello world" />
+        <constructor-arg><null/></constructor-arg>
+    </bean>
+
+    <bean id="logUtil" class="com.example.log.LogUtil" />
+
+    <!--<bean id="encoreableDelegate" class="com.example.beans.aspect.DefaultEncoreable" />-->
+
+    <!-- 定义切面 -->
+    <aop:config>
+        <aop:aspect ref="minstrel">
+            <aop:pointcut id="embark" expression="execution(* *.embarkOnQuest(..))" />
+            <aop:before pointcut-ref="embark" method="singBeforeQuest" />
+            <aop:after pointcut-ref="embark" method="singAfterQuest" />
+            <aop:after-returning pointcut-ref="embark" method="returning" />
+            <aop:after-throwing pointcut-ref="embark" method="throwing" />
+        </aop:aspect>
+    </aop:config>
+
+    <!--<aop:config>-->
+        <!--<aop:aspect>-->
+            <!--<aop:declare-parents types-matching="com.example.beans.aspect.Performance+"-->
+                                 <!--implement-interface="com.example.beans.aspect.Encoreable"-->
+                                 <!--delegate-ref="encoreableDelegate" />-->
+        <!--</aop:aspect>-->
+    <!--</aop:config>-->
+
+    <!--<aop:config>-->
+        <!--<aop:aspect ref="studentDal">-->
+            <!--<aop:pointcut id="log" expression="execution(com.example.dal.StudentDal.*(..))" />-->
+        <!--</aop:aspect>-->
+    <!--</aop:config>-->
+
+</beans>
